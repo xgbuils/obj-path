@@ -1,0 +1,32 @@
+{
+  "name": "obj-path",
+  "version": "0.1.0",
+  "description": "parser string to array that is input of object-path",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xgbuils/obj-path.git"
+  },
+  "keywords": [
+    "object",
+    "path"
+  ],
+  "author": "Xavier Garcia Buils <xgbuils@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xgbuils/obj-path/issues"
+  },
+  "homepage": "https://github.com/xgbuils/obj-path#readme",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.0.0",
+    "gulp-mocha": "^2.1.3"
+  }
+}
