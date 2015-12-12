@@ -1,10 +1,10 @@
 var bracketRegexp = /\['((?:\\'|[^'])*)'\]|\["((?:\\"|[^"])*)"\]|\[(\d+)\]/g
 var pointRegexp = /[^.\[]+/g
 
-function getToken(string, start) {
-	if (start >= string.length) {
-		return null
-	}
+function getToken (string, start) {
+    if (start >= string.length) {
+        return null
+    }
     var matches
     var match
     var isBracketExpression = string[start] === '['
@@ -13,9 +13,9 @@ function getToken(string, start) {
     matches = regexp.exec(string)
     if (isBracketExpression) {
         match = matches && (
-            replace(matches[1], '\\\'', '\'') || 
-        	replace(matches[2], '\\"', '"') || 
-        	parseInt(matches[3]) || ''
+            replace(matches[1], '\\\'', '\'') ||
+            replace(matches[2], '\\"', '"') ||
+            parseInt(matches[3]) || ''
         )
     } else if (start === 0 || string[start++] === '.') {
         match = matches && matches[0]
@@ -24,15 +24,15 @@ function getToken(string, start) {
         throw new Error('blu')
     }
     return {
-    	value: match,
-    	next: regexp.lastIndex
+        value: match,
+        next: regexp.lastIndex
     }
 }
 
-function replace(str, a, b) {
-	if (str) {
-		return str.replace(a, b)
-	}
+function replace (str, a, b) {
+    if (str) {
+        return str.replace(a, b)
+    }
 }
 
 module.exports = getToken

@@ -110,7 +110,7 @@ describe('parser', function () {
     })
     context('given "foo[\'fs[23][""]d\']"', function () {
         it('returns ["foo", "fs[23][\"\"]d"]', function () {
-            expect(parser("foo['fs[23][\"\"]d']")).to.be.deep.equal(['foo', 'fs[23][""]d'])
+            expect(parser('foo[\'fs[23][""]d\']')).to.be.deep.equal(['foo', 'fs[23][""]d'])
         })
     })
     context('given "fòö_["bár"][""].$fizz[42].ña"', function () {

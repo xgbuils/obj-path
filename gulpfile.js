@@ -1,20 +1,17 @@
-var gulp  = require('gulp')
+var gulp = require('gulp')
 var mocha = require('gulp-mocha')
 var eslint = require('gulp-eslint')
 
 gulp.task('test', function () {
     gulp.src([
-            './test/parser/getToken_test.js',
-            './test/parser/parser_test.js'
-        ])
-        .pipe(mocha())
+        './test/parser/getToken_test.js',
+        './test/parser/parser_test.js'
+    ])
+    .pipe(mocha())
 })
 
 gulp.task('lint', function () {
-    return gulp.src(['./**/*.js'])
-        .pipe(eslint({
-            fix: true
-        }))
+    return gulp.src('./**/*.js')
+        .pipe(eslint())
         .pipe(eslint.format())
-        .pipe(gulp.dest('./'))
 })
