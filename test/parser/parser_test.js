@@ -1,5 +1,5 @@
 var expect = require('chai').expect
-var parser = require('../../')
+var parser = require('../../parser/parser')
 
 describe('parser', function () {
     context('given "foo.bar"', function () {
@@ -7,9 +7,28 @@ describe('parser', function () {
             expect(parser('foo.bar')).to.be.deep.equal(['foo', 'bar'])
         })
     })
+    context('given "fo2o.bar"', function () {
+        it('returns ["fo2o", "bar"]', function () {
+            expect(parser('fo2o.bar')).to.be.deep.equal(['fo2o', 'bar'])
+        })
+    })
     context('given "foo["bar"]"', function () {
         it('returns ["foo", "bar"]', function () {
             expect(parser('foo["bar"]')).to.be.deep.equal(['foo', 'bar'])
+        })
+    })
+    context('given "foo[\'bar"]" (bad quotes)', function () {
+        it('throws Error', function () {
+            expect(function () {
+                parser('foo[\'bar"]')
+            }).to.Throw(Error)
+        })
+    })
+    context('given "foo["bar\']" (bad quotes)', function () {
+        it('throws Error', function () {
+            expect(function () {
+                parser('foo["bar\']')
+            }).to.Throw(Error)
         })
     })
     context('given "foo[""]"', function () {
@@ -23,18 +42,24 @@ describe('parser', function () {
         })
     })
     context('given "foo[]"', function () {
-        it('returns undefined', function () {
-            expect(parser('foo[]')).to.be.equal(undefined)
+        it('throws Error', function () {
+            expect(function () {
+                parser('foo[]')
+            }).to.Throw(Error)
         })
     })
     context('given "foo[bar]"', function () {
-        it('returns undefined', function () {
-            expect(parser('foo[bar]')).to.be.equal(undefined)
+        it('throws Error', function () {
+            expect(function () {
+                parser('foo[bar]')
+            }).to.Throw(Error)
         })
     })
     context('given "["bar"]foo"', function () {
-        it('returns undefined', function () {
-            expect(parser('["bar"]foo')).to.be.equal(undefined)
+        it('throws Error', function () {
+            expect(function () {
+                parser('["bar"]foo')
+            }).to.Throw(Error)
         })
     })
     context('given "["bar"].foo"', function () {
@@ -58,8 +83,10 @@ describe('parser', function () {
         })
     })
     context('given "[254].[23]"', function () {
-        it('returns undefined', function () {
-            expect(parser('[254].[23]')).to.be.deep.equal(undefined)
+        it('throws Error', function () {
+            expect(function () {
+                parser('[254].[23]')
+            }).to.Throw(Error)
         })
     })
     context('given "[254][23]"', function () {
@@ -68,13 +95,17 @@ describe('parser', function () {
         })
     })
     context('given ".foo"', function () {
-        it('returns undefined', function () {
-            expect(parser('.foo')).to.be.deep.equal(undefined)
+        it('throws Error', function () {
+            expect(function () {
+                parser('.foo')
+            }).to.Throw(Error)
         })
     })
     context('given "bar..foo"', function () {
-        it('returns undefined', function () {
-            expect(parser('bar..foo')).to.be.deep.equal(undefined)
+        it('throws Error', function () {
+            expect(function () {
+                parser('bar..foo')
+            }).to.Throw(Error)
         })
     })
     context('given "foo[\'fs[23][""]d\']"', function () {

@@ -3,7 +3,10 @@ var mocha = require('gulp-mocha')
 var eslint = require('gulp-eslint')
 
 gulp.task('test', function () {
-    gulp.src('./test/**/*_test.js')
+    gulp.src([
+            './test/parser/getToken_test.js',
+            './test/parser/parser_test.js'
+        ])
         .pipe(mocha())
 })
 
