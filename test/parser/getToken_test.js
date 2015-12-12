@@ -1,5 +1,5 @@
 var expect = require('chai').expect
-var getToken = require('../../parser/getToken')
+var getToken = require('../../src/parser/getToken')
 
 describe('getToken', function () {
     describe('identifier in beginning of string', function () {

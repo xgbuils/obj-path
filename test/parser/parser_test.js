@@ -1,5 +1,5 @@
 var expect = require('chai').expect
-var parser = require('../../parser/parser')
+var parser = require('../../src/parser/parser')
 
 describe('parser', function () {
     context('given "foo.bar"', function () {
