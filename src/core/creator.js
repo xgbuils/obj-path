@@ -1,6 +1,6 @@
-var _ = require('./helpers/type')
+var _ = require('../helpers/type')
 
-function creator (obj, array, index) {
+function creator (obj, array, index, cb) {
     var n = array.length
     var ref = obj
     var i = index
@@ -10,10 +10,8 @@ function creator (obj, array, index) {
         key = array[i]
         ref = ref[prevKey] = _.isNumber(key) ? [] : {}
     }
-    return {
-        parent: ref,
-        key: key
-    }
+
+    return cb(ref, key)
 }
 
 module.exports = creator

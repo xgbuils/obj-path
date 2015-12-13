@@ -356,8 +356,8 @@ describe('coalesce', function (){
   });
 });*/
 
-/*describe('empty', function (){
-  it('should ignore invalid arguments safely', function (){
+describe('empty', function () {
+  /*it('should ignore invalid arguments safely', function (){
     var obj = {};
     expect(objectPath.empty()).to.equal(void 0);
     expect(objectPath.empty(obj, 'path')).to.equal(void 0);
@@ -365,7 +365,7 @@ describe('coalesce', function (){
 
     obj.path = true;
 
-    expect(objectPath.empty(obj, 'inexistant')).to.equal(obj);
+    //expect(objectPath.empty(obj, 'inexistant')).to.equal(obj);
   });
 
   it('should empty each path according to their types', function (){
@@ -422,10 +422,10 @@ describe('coalesce', function (){
     expect(obj.instance.notOwn).to.be.an('undefined');
     expect(obj.instance.arr).to.be.an('array');
     expect(obj['function']).to.equal(null);
-  });
-});
+  });*/
+})
 
-describe('del', function (){
+/*describe('del', function (){
   it('should return undefined on empty object', function (){
     expect(objectPath.del({}, 'a')).to.equal(void 0);
   });

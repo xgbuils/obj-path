@@ -1,7 +1,13 @@
+var sinon = require('sinon')
 var expect = require('chai').expect
-var accessor = require('../src/accessor')
+var accessor = require('../../src/core/accessor')
 
 describe('accessor', function () {
+    var cb
+    beforeEach(function () {
+        cb = sinon.spy()
+    })
+
     describe('array path that exists in object and such length is greater than 1', function () {
         context('given { foo: { bar: 3 } } and [\'foo\', \'bar\'] with index 0', function () {
             it('returns correct reference', function () {
@@ -10,11 +16,8 @@ describe('accessor', function () {
                         bar: 3
                     }
                 }
-                expect(accessor(obj, ['foo', 'bar'], 0)).to.be.deep.equal({
-                    parent: obj.foo,
-                    key: 'bar',
-                    stop: 1
-                })
+                accessor(obj, ['foo', 'bar'], 0, cb)
+                expect(cb.withArgs(obj.foo, 'bar', 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -25,11 +28,8 @@ describe('accessor', function () {
                 var obj = {
                     bar: 3
                 }
-                expect(accessor(obj, ['foo', 'bar'], 1)).to.be.deep.equal({
-                    parent: obj,
-                    key: 'bar',
-                    stop: 1
-                })
+                accessor(obj, ['foo', 'bar'], 1, cb)
+                expect(cb.withArgs(obj, 'bar', 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -42,11 +42,8 @@ describe('accessor', function () {
                         bup: 3
                     }
                 }
-                expect(accessor(obj, ['foo', 'bar', 'buzz'], 0)).to.be.deep.equal({
-                    parent: obj.foo,
-                    key: 'bar',
-                    stop: 1
-                })
+                accessor(obj, ['foo', 'bar', 'buzz'], 0, cb)
+                expect(cb.withArgs(obj.foo, 'bar', 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -59,11 +56,8 @@ describe('accessor', function () {
                         bup: 3
                     }
                 }
-                expect(accessor(obj, ['foo', 'bar'], 0)).to.be.deep.equal({
-                    parent: obj.foo,
-                    key: 'bar',
-                    stop: 1
-                })
+                accessor(obj, ['foo', 'bar'], 0, cb)
+                expect(cb.withArgs(obj.foo, 'bar', 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -71,11 +65,9 @@ describe('accessor', function () {
     describe('array path with empty object.', function () {
         context('given {} and [\'foo\', \'bar\'] and index 0', function () {
             it('returns correct reference', function () {
-                expect(accessor({}, ['foo', 'bar'], 0)).to.be.deep.equal({
-                    parent: {},
-                    key: 'foo',
-                    stop: 0
-                })
+                var obj = {}
+                accessor(obj, ['foo', 'bar'], 0, cb)
+                expect(cb.withArgs(obj, 'foo', 0).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -88,11 +80,8 @@ describe('accessor', function () {
                         bup: 3
                     }
                 }
-                expect(accessor(obj, [], 0)).to.be.deep.equal({
-                    parent: obj,
-                    key: undefined,
-                    stop: 0
-                })
+                accessor(obj, [], 0, cb)
+                expect(cb.withArgs(obj, undefined, 0).calledOnce).to.be.equal(true)
             })
         })
     })

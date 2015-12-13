@@ -6,8 +6,9 @@ gulp.task('test', function () {
     gulp.src([
         './test/parser/getToken_test.js',
         './test/parser/parser_test.js',
-        './test/accessor_test.js',
-        './test/creator_test.js',
+        './test/core/accessor_test.js',
+        './test/core/creator_test.js',
+        './test/core/mutator_test.js',
         './test/helpers/pathNormalizer_test.js',
         './test/obj-path_test.js'
     ])

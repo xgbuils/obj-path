@@ -27,7 +27,8 @@
     "chai": "^3.4.1",
     "gulp": "^3.9.0",
     "gulp-eslint": "^1.0.0",
-    "gulp-mocha": "^2.1.3"
+    "gulp-mocha": "^2.1.3",
+    "sinon": "^1.17.2"
   },
   "dependencies": {
     "isarray": "^1.0.0"

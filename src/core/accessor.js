@@ -3,7 +3,7 @@
  * - typeof obj === 'object'
  * - index >= 0
  */
-function accessor (obj, array, index) {
+function accessor (obj, array, index, cb) {
     var ref = obj
     var n = array.length - 1
     var i = index
@@ -17,13 +17,14 @@ function accessor (obj, array, index) {
         key = array[++i]
     }
 
-    var result = {
+    return cb(ref, key, i)
+    /*var result = {
         parent: ref,
         key: key,
         stop: i
     }
 
-    return result
+    return result*/
 }
 
 module.exports = accessor
