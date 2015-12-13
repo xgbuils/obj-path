@@ -15,16 +15,18 @@ function getToken (string, start) {
         match = matches && (
             replace(matches[1], '\\\'', '\'') ||
             replace(matches[2], '\\"', '"') ||
-            parseInt(matches[3]) || ''
+            parseInt(matches[3])
         )
     } else if (start === 0 || string[start++] === '.') {
         match = matches && matches[0]
     }
-    if (!matches || start + matches[0].length !== regexp.lastIndex) {
-        throw new Error('blu')
+    if (!matches) {
+        throw new Error(string.substr(start) + ' is not correct string path')
+    } else if (start + matches[0].length !== regexp.lastIndex) {
+        throw new Error(string.substring(start, matches[0].length) + ' is not correct string path')
     }
     return {
-        value: match,
+        value: match == 0 ? match : (match || ''),
         next: regexp.lastIndex
     }
 }
