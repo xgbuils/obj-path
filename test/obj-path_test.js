@@ -1,3 +1,5 @@
+/*eslint no-unused-expressions: 0*/
+
 var expect = require('chai').expect
 var objectPath = require('../src/index.js')
 
@@ -93,14 +95,14 @@ describe('get', function () {
     })
 
     it('should return the default value when path is empty', function () {
-        var obj = { '1a': 'foo' };
+        var obj = { '1a': 'foo' }
         // CHANGED
         //expect(objectPath.get(obj, '', null)).to.be.deep.equal({ '1a': 'foo' });
-        expect(objectPath.get(obj, '', null)).to.be.deep.equal(null);
+        expect(objectPath.get(obj, '', null)).to.be.deep.equal(null)
         // TODO
         //expect(objectPath.get(obj, [])).to.be.deep.equal({ '1a': 'foo' });
-        expect(objectPath.get({  }, ['1'])).to.be.equal(undefined);
-    });
+        expect(objectPath.get({}, ['1'])).to.be.equal(undefined)
+    })
 
     it('should skip non own properties with isEmpty', function () {
         var Base = function () { }
@@ -190,8 +192,8 @@ describe('set', function () {
         // CHANGED
         objectPath.set(obj, 'c[0][1].m', 'l')
         expect(obj.c).to.be.an('array')
-        expect(obj.c[0]).to.be.an('array');
-        expect(obj).to.have.deep.property('c.0.1.m', 'l');
+        expect(obj.c[0]).to.be.an('array')
+        expect(obj).to.have.deep.property('c.0.1.m', 'l')
 
         obj = getTestObj()
         objectPath.set(obj, ['c', '0', 1, 'm'], 'l')

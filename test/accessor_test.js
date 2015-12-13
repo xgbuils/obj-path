@@ -12,7 +12,8 @@ describe('accessor', function () {
                 }
                 expect(accessor(obj, ['foo', 'bar'], 0)).to.be.deep.equal({
                     parent: obj.foo,
-                    key: 'bar'
+                    key: 'bar',
+                    stop: 1
                 })
             })
         })
@@ -26,7 +27,8 @@ describe('accessor', function () {
                 }
                 expect(accessor(obj, ['foo', 'bar'], 1)).to.be.deep.equal({
                     parent: obj,
-                    key: 'bar'
+                    key: 'bar',
+                    stop: 1
                 })
             })
         })
@@ -61,6 +63,35 @@ describe('accessor', function () {
                     parent: obj.foo,
                     key: 'bar',
                     stop: 1
+                })
+            })
+        })
+    })
+
+    describe('array path with empty object.', function () {
+        context('given {} and [\'foo\', \'bar\'] and index 0', function () {
+            it('returns correct reference', function () {
+                expect(accessor({}, ['foo', 'bar'], 0)).to.be.deep.equal({
+                    parent: {},
+                    key: 'foo',
+                    stop: 0
+                })
+            })
+        })
+    })
+
+    describe('empty array path with object.', function () {
+        context('given { foo: { bup: 3 } } and [] and index 0', function () {
+            it('returns correct reference', function () {
+                var obj = {
+                    foo: {
+                        bup: 3
+                    }
+                }
+                expect(accessor(obj, [], 0)).to.be.deep.equal({
+                    parent: obj,
+                    key: undefined,
+                    stop: 0
                 })
             })
         })

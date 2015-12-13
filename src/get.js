@@ -4,7 +4,9 @@ var accessor = require('./accessor')
 function get (obj, path, def) {
     path = pathNormalizer(path)
     var reference = accessor(obj, path, 0)
-    return reference.hasOwnProperty('stop') ? def : reference.parent[reference.key]
+    var parent = reference.parent
+    var key = reference.key
+    return (reference.stop < path.length - 1 || !parent.hasOwnProperty(key)) ? def : parent[key]
 }
 
 module.exports = get

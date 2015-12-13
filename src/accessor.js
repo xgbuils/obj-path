@@ -4,7 +4,6 @@
  * - index >= 0
  */
 function accessor (obj, array, index) {
-    var stop
     var ref = obj
     var n = array.length - 1
     var i = index
@@ -13,22 +12,17 @@ function accessor (obj, array, index) {
         if (ref.hasOwnProperty(key)) {
             ref = ref[key]
         } else {
-            stop = i
             break
         }
         key = array[++i]
     }
-    if (!ref.hasOwnProperty(key)) {
-        stop = i
-    }
 
     var result = {
         parent: ref,
-        key: key
+        key: key,
+        stop: i
     }
-    if (stop !== undefined) {
-        result.stop = stop
-    }
+
     return result
 }
 

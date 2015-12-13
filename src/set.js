@@ -6,7 +6,7 @@ function set (obj, path, value) {
     path = pathNormalizer(path)
     var reference = accessor(obj, path, 0)
     var stop = reference.stop
-    if (stop !== undefined && stop < path.length - 1) {
+    if (stop < path.length - 1) {
         reference = creator(obj, path, stop)
     }
     reference.parent[reference.key] = value
