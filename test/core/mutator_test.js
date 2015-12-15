@@ -54,4 +54,13 @@ describe('mutator', function () {
             })
         })
     })
+
+    describe('when object is null', function () {
+        it('does not set anything and callback is not called', function () {
+            var obj = null
+            expect(mutator(obj, ['bar', 'fizz'], 0, cb)).to.be.deep.equal(undefined)
+            expect(cb.called).to.be.equal(false)
+            expect(obj).to.be.equal(null)
+        })
+    })
 })

@@ -17,21 +17,14 @@ describe('pathNormalizer', function () {
             expect(pathNormalizer(23)).to.be.deep.equal([23])
         })
     })
-    context('given object', function () {
-        it('throws Error', function () {
-            expect(function () {
-                pathNormalizer({})
-            }).to.Throw('[object Object] is not correct string path')
-        })
-    })
     context('given null', function () {
-        it('returns empty array', function () {
-            expect(pathNormalizer(null)).to.be.deep.equal([])
+        it('returns array with null element', function () {
+            expect(pathNormalizer(null)).to.be.deep.equal([null])
         })
     })
     context('given undefined', function () {
-        it('returns empty array', function () {
-            expect(pathNormalizer(undefined)).to.be.deep.equal([])
+        it('returns array with undefined element', function () {
+            expect(pathNormalizer(undefined)).to.be.deep.equal([undefined])
         })
     })
     context('given 0', function () {

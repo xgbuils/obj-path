@@ -1,6 +1,6 @@
 var sinon = require('sinon')
 var expect = require('chai').expect
-var accessor = require('../../src/core/accessor')
+var accessor = require('../src/core/accessor')
 
 describe('accessor', function () {
     var cb
@@ -83,14 +83,6 @@ describe('accessor', function () {
                 accessor(obj, [], 0, cb)
                 expect(cb.withArgs(obj, undefined, 0).calledOnce).to.be.equal(true)
             })
-        })
-    })
-
-    describe('when object is undefined', function () {
-        it('calls callback with correct arguments', function () {
-            var obj
-            accessor(obj, ['foo', 'bar'], 0, cb)
-            expect(cb.called).to.be.equal(false)
         })
     })
 })
