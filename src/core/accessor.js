@@ -19,7 +19,7 @@ function accessor (obj, array, index, cb) {
             key = array[++i]
         }
 
-        return cb(ref, key, i)
+        return cb(ref, key, ref[key], i)
     }
 }
 

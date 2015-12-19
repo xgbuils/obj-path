@@ -1,12 +1,9 @@
-var pathNormalizer = require('./helpers/pathNormalizer')
-var accessor = require('./core/accessor')
-var _ = require('./helpers/type')
+var accessor = require('./src/core/accessor')
+var _ = require('./src/helpers/type')
 
 function empty (obj, path) {
-    path = pathNormalizer(path)
-    return accessor(obj, path, 0, function (parent, key) {
+    return accessor(obj, path, 0, function (parent, key, oldValue) {
         if (parent.hasOwnProperty(key)) {
-            var oldValue = parent[key]
             if (oldValue !== null && oldValue !== undefined && _.isFunction(oldValue.constructor)) {
                 parent[key] = (new oldValue.constructor()).valueOf()
             }

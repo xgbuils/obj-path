@@ -1,5 +1,5 @@
 var expect = require('chai').expect
-var pathNormalizer = require('../../src/helpers/pathNormalizer')
+var pathNormalizer = require('../../src/parser/pathNormalizer')
 
 describe('pathNormalizer', function () {
     context('given "foo.bar"', function () {

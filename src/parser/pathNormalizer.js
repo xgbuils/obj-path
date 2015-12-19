@@ -1,5 +1,5 @@
 var isArray = require('isarray')
-var _ = require('./type')
+var _ = require('../helpers/type')
 var parser = require('../parser/parser')
 
 function pathNormalizer (path) {

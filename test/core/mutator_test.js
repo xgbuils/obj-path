@@ -24,7 +24,7 @@ describe('mutator', function () {
                     ]
                 }
             })
-            expect(cb.withArgs(obj.foo.bar[0].fizz, 'buzz').calledOnce).to.be.equal(true)
+            expect(cb.withArgs(obj.foo.bar[0].fizz, 'buzz', undefined).calledOnce).to.be.equal(true)
         })
     })
 
@@ -41,7 +41,7 @@ describe('mutator', function () {
                 }
             }
             mutator(obj, ['foo', 'bar', 0], 0, cb)
-            expect(cb.withArgs(obj.foo.bar, 0).calledOnce).to.be.equal(true)
+            expect(cb.withArgs(obj.foo.bar, 0, obj.foo.bar[0]).calledOnce).to.be.equal(true)
             expect(obj).to.be.deep.equal({
                 bup: 3,
                 foo: {

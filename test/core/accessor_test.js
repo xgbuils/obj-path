@@ -17,7 +17,7 @@ describe('accessor', function () {
                     }
                 }
                 accessor(obj, ['foo', 'bar'], 0, cb)
-                expect(cb.withArgs(obj.foo, 'bar', 1).calledOnce).to.be.equal(true)
+                expect(cb.withArgs(obj.foo, 'bar', 3, 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -29,7 +29,7 @@ describe('accessor', function () {
                     bar: 3
                 }
                 accessor(obj, ['foo', 'bar'], 1, cb)
-                expect(cb.withArgs(obj, 'bar', 1).calledOnce).to.be.equal(true)
+                expect(cb.withArgs(obj, 'bar', 3, 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -43,7 +43,7 @@ describe('accessor', function () {
                     }
                 }
                 accessor(obj, ['foo', 'bar', 'buzz'], 0, cb)
-                expect(cb.withArgs(obj.foo, 'bar', 1).calledOnce).to.be.equal(true)
+                expect(cb.withArgs(obj.foo, 'bar', undefined, 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -57,7 +57,7 @@ describe('accessor', function () {
                     }
                 }
                 accessor(obj, ['foo', 'bar'], 0, cb)
-                expect(cb.withArgs(obj.foo, 'bar', 1).calledOnce).to.be.equal(true)
+                expect(cb.withArgs(obj.foo, 'bar', undefined, 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -67,7 +67,7 @@ describe('accessor', function () {
             it('returns correct reference', function () {
                 var obj = {}
                 accessor(obj, ['foo', 'bar'], 0, cb)
-                expect(cb.withArgs(obj, 'foo', 0).calledOnce).to.be.equal(true)
+                expect(cb.withArgs(obj, 'foo', undefined, 0).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -81,7 +81,7 @@ describe('accessor', function () {
                     }
                 }
                 accessor(obj, [], 0, cb)
-                expect(cb.withArgs(obj, undefined, 0).calledOnce).to.be.equal(true)
+                expect(cb.withArgs(obj, undefined, undefined, 0).calledOnce).to.be.equal(true)
             })
         })
     })

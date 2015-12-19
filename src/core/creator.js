@@ -14,7 +14,7 @@ function creator (obj, array, index, cb) {
         ref = ref[prevKey] = _.isNumber(key) ? [] : {}
     }
 
-    return cb(ref, key)
+    return cb(ref, key, undefined)
 }
 
 module.exports = creator

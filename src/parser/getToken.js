@@ -1,3 +1,5 @@
+var _ = require('../helpers/type')
+var isString = _.isString
 var bracketRegexp = /\['((?:\\'|[^'])*)'\]|\["((?:\\"|[^"])*)"\]|\[(\d+)\]/g
 var pointRegexp = /[^.\[]+/g
 
@@ -12,6 +14,15 @@ function getToken (string, start) {
     regexp.lastIndex = start
     matches = regexp.exec(string)
     if (isBracketExpression) {
+        if (matches) {
+            match = replace(matches[1], '\\\'', '\'') || ''
+            if (match === undefined) {
+                match = replace(matches[2], '\\"', '"') || ''
+            }
+            if (match === undefined) {
+                match = parseInt(matches[3])
+            }
+        }
         match = matches && (
             replace(matches[1], '\\\'', '\'') ||
             replace(matches[2], '\\"', '"') ||
@@ -26,13 +37,13 @@ function getToken (string, start) {
         throw new Error(string.substring(start, matches[0].length) + ' is not correct string path')
     }
     return {
-        value: match == 0 ? match : (match || ''),
+        value: match === 0 ? 0 : match || '',
         next: regexp.lastIndex
     }
 }
 
 function replace (str, a, b) {
-    if (str) {
+    if (isString(str)) {
         return str.replace(a, b)
     }
 }
