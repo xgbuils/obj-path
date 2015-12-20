@@ -1,13 +1,13 @@
 var op = require('./op')
 
-function empty (obj, path) {
+function del (obj, path) {
     return op(obj, path, {
         op: function () {
-            this.base[this.name] = (new this.value.constructor()).valueOf()
+            delete this.base[this.name]
             return this.value
         },
         ref: true
     })
 }
 
-module.exports = empty
+module.exports = del

@@ -10,10 +10,11 @@ function getTestObj () {
             c: [],
             d: ['a', 'b'],
             e: [
-            {},
+                {},
                 {
                     f: 'g'
-                }],
+                }
+            ],
             f: 'i'
         }
     }
@@ -27,7 +28,7 @@ describe('get', function () {
             }
         }
         expect(objectPath.get(obj, '15\u00f8C.3\u0111')).to.be.equal(1)
-        //expect(objectPath.get(obj, ['15\u00f8C', '3\u0111'])).to.be.equal(1)
+        expect(objectPath.get(obj, ['15\u00f8C', '3\u0111'])).to.be.equal(1)
     })
 
     it('should return the value using dot in key', function () {
@@ -221,48 +222,47 @@ describe('set', function () {
     })
 })
 
-/*describe('push', function () {
-  it('should push value to existing array using unicode key', function () {
-    var obj = getTestObj();
-    objectPath.push(obj, 'b.\u1290c', 'l');
-    expect(obj).to.have.deep.property('b.\u1290c.0', 'l');
-    objectPath.push(obj, ['b','\u1290c'], 'l');
-    expect(obj).to.have.deep.property('b.\u1290c.1', 'l');
-  });
+describe('push', function () {
+    it('should push value to existing array using unicode key', function () {
+        var obj = getTestObj()
+        objectPath.push(obj, 'b.\u1290c', 'l')
+        expect(obj).to.have.deep.property('b.\u1290c.0', 'l')
+        objectPath.push(obj, ['b', '\u1290c'], 'l')
+        expect(obj).to.have.deep.property('b.\u1290c.1', 'l')
+    })
 
-  it('should push value to existing array using dot key', function () {
-    var obj = getTestObj();
-    objectPath.push(obj, ['b','z.d'], 'l');
-    expect(objectPath.get(obj, ['b','z.d', 0])).to.be.equal('l');
-  });
+    it('should push value to existing array using dot key', function () {
+        var obj = getTestObj()
+        objectPath.push(obj, ['b', 'z.d'], 'l')
+        expect(objectPath.get(obj, ['b', 'z.d', 0])).to.be.equal('l')
+    })
 
-  it('should push value to existing array', function () {
-    var obj = getTestObj();
-    objectPath.push(obj, 'b.c', 'l');
-    expect(obj).to.have.deep.property('b.c.0', 'l');
-    obj = getTestObj();
-    objectPath.push(obj, ['b','c'], 'l');
-    expect(obj).to.have.deep.property('b.c.0', 'l');
-  });
+    it('should push value to existing array', function () {
+        var obj = getTestObj()
+        objectPath.push(obj, 'b.c', 'l')
+        expect(obj).to.have.deep.property('b.c.0', 'l')
+        obj = getTestObj()
+        objectPath.push(obj, ['b', 'c'], 'l')
+        expect(obj).to.have.deep.property('b.c.0', 'l')
+    })
 
-  it('should push value to new array', function () {
-    var obj = getTestObj();
-    objectPath.push(obj, 'b.h', 'l');
-    expect(obj).to.have.deep.property('b.h.0', 'l');
-    obj = getTestObj();
-    objectPath.push(obj, ['b','h'], 'l');
-    expect(obj).to.have.deep.property('b.h.0', 'l');
-  });
+    it('should push value to new array', function () {
+        var obj = getTestObj()
+        objectPath.push(obj, 'b.h', 'l')
+        expect(obj).to.have.deep.property('b.h.0', 'l')
+        obj = getTestObj()
+        objectPath.push(obj, ['b', 'h'], 'l')
+        expect(obj).to.have.deep.property('b.h.0', 'l')
+    })
 
-  it('should push value to existing array using number path', function () {
-    var obj = getTestObj();
-    objectPath.push(obj.b.e, 0, 'l');
-    expect(obj).to.have.deep.property('b.e.0.0', 'l');
-  });
+    /*it('should push value to existing array using number path', function () {
+        var obj = getTestObj()
+        objectPath.push(obj.b.e, 0, 'l')
+        expect(obj).to.have.deep.property('b.e.0.0', 'l')
+    })*/
+})
 
-});
-
-describe('ensureExists', function () {
+/*describe('ensureExists', function () {
   it('should create the path if it does not exists', function () {
     var obj = getTestObj();
     var oldVal = objectPath.ensureExists(obj, 'b.g.1.l', 'test');
@@ -425,8 +425,8 @@ describe('empty', function () {
         //expect(obj['function']).to.equal(null)
     })
 })
-/*
-describe('del', function (){
+
+describe('del', function () {
     it('should return undefined on empty object', function () {
         expect(objectPath.del({}, 'a')).to.equal(void 0)
     })
@@ -437,63 +437,67 @@ describe('del', function (){
         expect(obj.b.d).to.deep.equal(['a'])
     })
 
-  it('should delete deep paths', function (){
-    var obj = getTestObj();
+    it('should delete deep paths', function () {
+        var obj = getTestObj()
 
-    expect(objectPath.del(obj)).to.be.equal(obj);
+        //expect(objectPath.del(obj)).to.be.equal(obj)
 
-    objectPath.set(obj, 'b.g.1.0', 'test');
-    objectPath.set(obj, 'b.g.1.1', 'test');
-    objectPath.set(obj, 'b.h.az', 'test');
-    objectPath.set(obj, 'b.\ubeef', 'test');
-    objectPath.set(obj, ['b','dot.dot'], 'test');
+        objectPath.set(obj, 'b.g[1][0]', 'test')
+        objectPath.set(obj, 'b.g[1][1]', 'test')
+        objectPath.set(obj, 'b.h.az', 'test')
+        objectPath.set(obj, 'b.\ubeef', 'test')
+        objectPath.set(obj, ['b', 'dot.dot'], 'test')
 
-    expect(obj).to.have.deep.property('b.g.1.0','test');
-    expect(obj).to.have.deep.property('b.g.1.1','test');
-    expect(obj).to.have.deep.property('b.h.az','test');
-    expect(obj).to.have.deep.property('b.\ubeef','test');
+        expect(obj).to.have.deep.property('b.g.1.0', 'test')
+        expect(obj).to.have.deep.property('b.g.1.1', 'test')
+        expect(obj).to.have.deep.property('b.h.az', 'test')
+        expect(obj).to.have.deep.property('b.\ubeef', 'test')
 
-    objectPath.del(obj, 'b.h.az');
-    expect(obj).to.not.have.deep.property('b.h.az');
-    expect(obj).to.have.deep.property('b.h');
+        objectPath.del(obj, 'b.h.az')
+        expect(obj).to.not.have.deep.property('b.h.az')
+        expect(obj).to.have.deep.property('b.h')
 
-    objectPath.del(obj, 'b.g.1.1');
-    expect(obj).to.not.have.deep.property('b.g.1.1');
-    expect(obj).to.have.deep.property('b.g.1.0','test');
+        objectPath.del(obj, 'b.g.1.1')
+        expect(obj).to.not.have.deep.property('b.g.1.1')
+        expect(obj).to.have.deep.property('b.g.1.0', 'test')
 
-    objectPath.del(obj, 'b.\ubeef');
-    expect(obj).to.not.have.deep.property('b.\ubeef');
+        objectPath.del(obj, 'b.\ubeef')
+        expect(obj).to.not.have.deep.property('b.\ubeef')
 
-    objectPath.del(obj, ['b','dot.dot']);
-    expect(objectPath.get(obj, ['b','dot.dot'])).to.be.equal(void 0);
+        objectPath.del(obj, ['b', 'dot.dot'])
+        expect(objectPath.get(obj, ['b', 'dot.dot'])).to.be.equal(void 0)
 
-    objectPath.del(obj, ['b','g','1','0']);
-    expect(obj).to.not.have.deep.property('b.g.1.0');
-    expect(obj).to.have.deep.property('b.g.1');
+        objectPath.del(obj, ['b', 'g', '1', '0'])
+        expect(obj).to.not.have.deep.property('b.g.1.0')
+        expect(obj).to.have.deep.property('b.g.1')
 
-    expect(objectPath.del(obj, ['b'])).to.not.have.deep.property('b.g');
-    expect(obj).to.be.deep.equal({'a':'b'});
-  });
+        expect(objectPath.del(obj, ['b'])).to.not.have.deep.property('b.g')
+        expect(obj).to.be.deep.equal({'a': 'b'})
+    })
 
-  it('should remove items from existing array', function (){
-    var obj = getTestObj();
+    /*it('should remove items from existing array', function (){
+      var obj = getTestObj();
 
-    objectPath.del(obj, 'b.d.0');
-    expect(obj.b.d).to.have.length(1);
-    expect(obj.b.d).to.be.deep.equal(['b']);
+      objectPath.del(obj, 'b.d.0');
+      expect(obj.b.d).to.have.length(1);
+      expect(obj.b.d).to.be.deep.equal(['b']);
 
-    objectPath.del(obj, 'b.d.0');
-    expect(obj.b.d).to.have.length(0);
-    expect(obj.b.d).to.be.deep.equal([]);
-  });
+      objectPath.del(obj, 'b.d.0');
+      expect(obj.b.d).to.have.length(0);
+      expect(obj.b.d).to.be.deep.equal([]);
+    });*/
 
-  it('should skip undefined paths', function (){
-    var obj = getTestObj();
+    it('should skip undefined paths', function () {
+        var obj = getTestObj()
 
-    expect(objectPath.del(obj, 'do.not.exist')).to.be.equal(obj);
-    expect(objectPath.del(obj, 'a.c')).to.be.equal('b');
-  });
-});*/
+        //expect(objectPath.del(obj, 'do.not.exist')).to.be.equal(obj);
+        // CHANGE
+        expect(objectPath.del(obj, 'do.not.exist')).to.be.equal(undefined)
+        //expect(objectPath.del(obj, 'a.c')).to.be.equal('b');
+        // CHANGE
+        expect(objectPath.del(obj, 'a.c')).to.be.equal(undefined)
+    })
+})
 /*
 describe('insert', function (){
   it('should insert value into existing array', function (){
@@ -535,72 +539,72 @@ describe('insert', function (){
       'asdf'
     ]);
   });
-});
+});*/
 
 describe('has', function () {
-  it('should return false for empty object', function () {
-    expect(objectPath.has({}, 'a')).to.be.equal(false);
-  });
+    it('should return false for empty object', function () {
+        expect(objectPath.has({}, 'a')).to.be.equal(false)
+    })
 
-  it('should return false for empty path', function () {
-    var obj = getTestObj();
-    expect(objectPath.has(obj, '')).to.be.equal(false);
-    expect(objectPath.has(obj, [])).to.be.equal(false);
-    expect(objectPath.has(obj, [''])).to.be.equal(false);
-  });
+    it('should return false for empty path', function () {
+        var obj = getTestObj()
+        expect(objectPath.has(obj, '')).to.be.equal(false)
+        expect(objectPath.has(obj, [])).to.be.equal(false)
+        expect(objectPath.has(obj, [''])).to.be.equal(false)
+    })
 
-  it('should test under shallow object', function () {
-    var obj = getTestObj();
-    expect(objectPath.has(obj, 'a')).to.be.equal(true);
-    expect(objectPath.has(obj, ['a'])).to.be.equal(true);
-    expect(objectPath.has(obj, 'z')).to.be.equal(false);
-    expect(objectPath.has(obj, ['z'])).to.be.equal(false);
-  });
+    it('should test under shallow object', function () {
+        var obj = getTestObj()
+        expect(objectPath.has(obj, 'a')).to.be.equal(true)
+        expect(objectPath.has(obj, ['a'])).to.be.equal(true)
+        expect(objectPath.has(obj, 'z')).to.be.equal(false)
+        expect(objectPath.has(obj, ['z'])).to.be.equal(false)
+    })
 
-  it('should work with number path', function () {
-    var obj = getTestObj();
-    expect(objectPath.has(obj.b.d, 0)).to.be.equal(true);
-    expect(objectPath.has(obj.b, 0)).to.be.equal(false);
-    expect(objectPath.has(obj.b.d, 10)).to.be.equal(false);
-    expect(objectPath.has(obj.b, 10)).to.be.equal(false);
-  });
+    it('should work with number path', function () {
+        var obj = getTestObj()
+        expect(objectPath.has(obj.b.d, 0)).to.be.equal(true)
+        expect(objectPath.has(obj.b, 0)).to.be.equal(false)
+        expect(objectPath.has(obj.b.d, 10)).to.be.equal(false)
+        expect(objectPath.has(obj.b, 10)).to.be.equal(false)
+    })
 
-  it('should test under deep object', function () {
-    var obj = getTestObj();
-    expect(objectPath.has(obj, 'b.f')).to.be.equal(true);
-    expect(objectPath.has(obj, ['b','f'])).to.be.equal(true);
-    expect(objectPath.has(obj, 'b.g')).to.be.equal(false);
-    expect(objectPath.has(obj, ['b','g'])).to.be.equal(false);
-  });
+    it('should test under deep object', function () {
+        var obj = getTestObj()
+        expect(objectPath.has(obj, 'b.f')).to.be.equal(true)
+        expect(objectPath.has(obj, ['b', 'f'])).to.be.equal(true)
+        expect(objectPath.has(obj, 'b.g')).to.be.equal(false)
+        expect(objectPath.has(obj, ['b', 'g'])).to.be.equal(false)
+    })
 
-  it('should test value under array', function () {
-    var obj = getTestObj();
-    expect(objectPath.has(obj, 'b.d.0')).to.be.equal(true);
-    expect(objectPath.has(obj, ['b','d',0])).to.be.equal(true);
-  });
+    it('should test value under array', function () {
+        var obj = getTestObj()
+        expect(objectPath.has(obj, 'b.d.0')).to.be.equal(true)
+        expect(objectPath.has(obj, ['b', 'd', 0])).to.be.equal(true)
+    })
 
-  it('should test the value under array deep', function () {
-    var obj = getTestObj();
-    expect(objectPath.has(obj, 'b.e.1.f')).to.be.equal(true);
-    expect(objectPath.has(obj, ['b','e',1,'f'])).to.be.equal(true);
-    expect(objectPath.has(obj, 'b.e.1.f.g.h.i')).to.be.equal(false);
-    expect(objectPath.has(obj, ['b','e',1,'f','g','h','i'])).to.be.equal(false);
-  });
+    it('should test the value under array deep', function () {
+        var obj = getTestObj()
+        expect(objectPath.has(obj, 'b.e.1.f')).to.be.equal(true)
+        expect(objectPath.has(obj, ['b', 'e', 1, 'f'])).to.be.equal(true)
+        expect(objectPath.has(obj, 'b.e.1.f.g.h.i')).to.be.equal(false)
+        expect(objectPath.has(obj, ['b', 'e', 1, 'f', 'g', 'h', 'i'])).to.be.equal(false)
+    })
 
-  it('should test the value under integer-like key', function () {
-    var obj = { '1a': 'foo' };
-    expect(objectPath.has(obj, '1a')).to.be.equal(true);
-    expect(objectPath.has(obj, ['1a'])).to.be.equal(true);
-  });
+    it('should test the value under integer-like key', function () {
+        var obj = { '1a': 'foo' }
+        expect(objectPath.has(obj, '1a')).to.be.equal(true)
+        expect(objectPath.has(obj, ['1a'])).to.be.equal(true)
+    })
 
-  it('should distinct nonexistent key and key = undefined', function () {
-    var obj = {};
-    expect(objectPath.has(obj, 'key')).to.be.equal(false);
+    it('should distinct nonexistent key and key = undefined', function () {
+        var obj = {}
+        expect(objectPath.has(obj, 'key')).to.be.equal(false)
 
-    obj.key = undefined;
-    expect(objectPath.has(obj, 'key')).to.be.equal(true);
-  });
-});*/
+        obj.key = undefined
+        expect(objectPath.has(obj, 'key')).to.be.equal(true)
+    })
+})
 
 /*describe('bind object', function () {
   // just get one scenario from each feature, so whole functionality is proxied well
