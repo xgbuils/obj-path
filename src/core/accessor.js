@@ -3,7 +3,8 @@
  * - typeof obj === 'object'
  * - index >= 0
  */
-function accessor (obj, array, index, cb) {
+function accessor (obj, array, cb, index) {
+    index = index || 0
     if (obj !== undefined && obj !== null) {
         var ref = obj
         var n = array.length - 1
@@ -19,7 +20,7 @@ function accessor (obj, array, index, cb) {
             key = array[++i]
         }
 
-        return cb(ref, key, ref[key], i)
+        return cb(ref, key, ref[key], i === array.length - 1 && ref.hasOwnProperty(key), i)
     }
 }
 

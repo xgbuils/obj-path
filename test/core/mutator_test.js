@@ -13,10 +13,7 @@ describe('mutator', function () {
             var obj = {
                 bup: 3
             }
-            mutator(obj, ['foo', 'bar', 0, 'fizz', 'buzz'], {
-                op: cb,
-                create: true
-            })
+            mutator(obj, ['foo', 'bar', 0, 'fizz', 'buzz'], true, cb)
             expect(obj).to.be.deep.equal({
                 bup: 3,
                 foo: {
@@ -27,7 +24,7 @@ describe('mutator', function () {
                     ]
                 }
             })
-            expect(cb.withArgs(obj.foo.bar[0].fizz, 'buzz', undefined).calledOnce).to.be.equal(true)
+            expect(cb.withArgs(obj.foo.bar[0].fizz, 'buzz', undefined, false, 4).calledOnce).to.be.equal(true)
         })
     })
 
@@ -42,11 +39,8 @@ describe('mutator', function () {
                     ]
                 }
             }
-            mutator(obj, ['foo', 'buzz', 0], {
-                op: cb,
-                create: true
-            })
-            expect(cb.withArgs(obj.foo.buzz, 0, obj.foo.buzz[0]).calledOnce).to.be.equal(true)
+            mutator(obj, ['foo', 'buzz', 0], true, cb, 0)
+            expect(cb.withArgs(obj.foo.buzz, 0, obj.foo.buzz[0], false, 2).calledOnce).to.be.equal(true)
             expect(obj).to.be.deep.equal({
                 foo: {
                     bar: [
@@ -72,11 +66,8 @@ describe('mutator', function () {
                     ]
                 }
             }
-            mutator(obj, ['foo', 'bar', 0], {
-                op: cb,
-                create: true
-            })
-            expect(cb.withArgs(obj.foo.bar, 0, obj.foo.bar[0]).calledOnce).to.be.equal(true)
+            mutator(obj, ['foo', 'bar', 0], true, cb)
+            expect(cb.withArgs(obj.foo.bar, 0, obj.foo.bar[0], true, 2).calledOnce).to.be.equal(true)
             expect(obj).to.be.deep.equal({
                 bup: 3,
                 foo: {
@@ -93,10 +84,7 @@ describe('mutator', function () {
     describe('when object is null', function () {
         it('does not set anything and callback is not called', function () {
             var obj = null
-            expect(mutator(obj, ['bar', 'fizz'], {
-                op: cb,
-                create: true
-            })).to.be.deep.equal(undefined)
+            expect(mutator(obj, ['bar', 'fizz'], true, cb, 0)).to.be.deep.equal(undefined)
             expect(cb.called).to.be.equal(false)
             expect(obj).to.be.equal(null)
         })

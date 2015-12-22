@@ -13,7 +13,7 @@ describe('creator', function () {
             var obj = {
                 bup: 3
             }
-            creator(obj, ['bar', 0], 0, cb)
+            creator(obj, ['bar', 0], cb, 0)
             expect(cb.withArgs([], 0, undefined).calledOnce).to.be.equal(true)
             expect(obj).to.be.deep.equal({
                 bup: 3,
@@ -27,7 +27,7 @@ describe('creator', function () {
             var obj = {
                 bup: 3
             }
-            creator(obj, ['bar', 'fizz'], 0, cb)
+            creator(obj, ['bar', 'fizz'], cb, 0)
             expect(cb.withArgs({}, 'fizz', undefined).calledOnce).to.be.equal(true)
             expect(obj).to.be.deep.equal({
                 bup: 3,

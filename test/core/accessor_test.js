@@ -16,8 +16,8 @@ describe('accessor', function () {
                         bar: 3
                     }
                 }
-                accessor(obj, ['foo', 'bar'], 0, cb)
-                expect(cb.withArgs(obj.foo, 'bar', 3, 1).calledOnce).to.be.equal(true)
+                accessor(obj, ['foo', 'bar'], cb, 0)
+                expect(cb.withArgs(obj.foo, 'bar', 3, true, 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -28,8 +28,8 @@ describe('accessor', function () {
                 var obj = {
                     bar: 3
                 }
-                accessor(obj, ['foo', 'bar'], 1, cb)
-                expect(cb.withArgs(obj, 'bar', 3, 1).calledOnce).to.be.equal(true)
+                accessor(obj, ['foo', 'bar'], cb, 1)
+                expect(cb.withArgs(obj, 'bar', 3, true, 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -42,8 +42,8 @@ describe('accessor', function () {
                         bup: 3
                     }
                 }
-                accessor(obj, ['foo', 'bar', 'buzz'], 0, cb)
-                expect(cb.withArgs(obj.foo, 'bar', undefined, 1).calledOnce).to.be.equal(true)
+                accessor(obj, ['foo', 'bar', 'buzz'], cb)
+                expect(cb.withArgs(obj.foo, 'bar', undefined, false, 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -56,8 +56,8 @@ describe('accessor', function () {
                         bup: 3
                     }
                 }
-                accessor(obj, ['foo', 'bar'], 0, cb)
-                expect(cb.withArgs(obj.foo, 'bar', undefined, 1).calledOnce).to.be.equal(true)
+                accessor(obj, ['foo', 'bar'], cb, 0)
+                expect(cb.withArgs(obj.foo, 'bar', undefined, false, 1).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -66,8 +66,8 @@ describe('accessor', function () {
         context('given {} and [\'foo\', \'bar\'] and index 0', function () {
             it('returns correct reference', function () {
                 var obj = {}
-                accessor(obj, ['foo', 'bar'], 0, cb)
-                expect(cb.withArgs(obj, 'foo', undefined, 0).calledOnce).to.be.equal(true)
+                accessor(obj, ['foo', 'bar'], cb)
+                expect(cb.withArgs(obj, 'foo', undefined, false, 0).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -80,8 +80,8 @@ describe('accessor', function () {
                         bup: 3
                     }
                 }
-                accessor(obj, [], 0, cb)
-                expect(cb.withArgs(obj, undefined, undefined, 0).calledOnce).to.be.equal(true)
+                accessor(obj, [], cb, 0)
+                expect(cb.withArgs(obj, undefined, undefined, false, 0).calledOnce).to.be.equal(true)
             })
         })
     })
@@ -89,7 +89,7 @@ describe('accessor', function () {
     describe('when object is undefined', function () {
         it('calls callback with correct arguments', function () {
             var obj
-            accessor(obj, ['foo', 'bar'], 0, cb)
+            accessor(obj, ['foo', 'bar'], cb)
             expect(cb.called).to.be.equal(false)
         })
     })

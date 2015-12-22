@@ -3,7 +3,7 @@ var _ = require('../helpers/type')
 /*
  * precondition obj !== undefined && obj !== null
  */
-function creator (obj, array, index, cb) {
+function creator (obj, array, cb, index) {
     var n = array.length
     var ref = obj
     var i = index
@@ -14,7 +14,7 @@ function creator (obj, array, index, cb) {
         ref = ref[prevKey] = _.isNumber(key) ? [] : {}
     }
 
-    return cb(ref, key, undefined, i)
+    return cb(ref, key, undefined, false, i - 1)
 }
 
 module.exports = creator

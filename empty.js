@@ -1,12 +1,9 @@
-var op = require('./op')
+var strictAccessor = require('./src/core/strict-accessor')
 
 function empty (obj, path) {
-    return op(obj, path, {
-        op: function () {
-            this.base[this.name] = (new this.value.constructor()).valueOf()
-            return this.value
-        },
-        ref: true
+    return strictAccessor(obj, path, function (base, name, value) {
+        base[name] = (new value.constructor()).valueOf()
+        return value
     })
 }
 

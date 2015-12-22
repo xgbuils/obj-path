@@ -13,6 +13,7 @@ var isArray = Array.isArray || function (arr) {
 }
 
 var isString = _.isString
+var isFunction = _.isFunction
 var bracketRegexp = /\['((?:\\'|[^'])*)'\]|\["((?:\\"|[^"])*)"\]|\[(\d+)\]/g
 var pointRegexp = /[^.\[]+/g
 
@@ -85,7 +86,8 @@ function pathNormalizer (path) {
     }
 }
 
-function accessor (obj, array, index, cb) {
+function accessor (obj, array, cb, index) {
+    index = index || 0
     if (obj !== undefined && obj !== null) {
         var ref = obj
         var n = array.length - 1
@@ -101,11 +103,19 @@ function accessor (obj, array, index, cb) {
             key = array[++i]
         }
 
-        return cb(ref, key, ref[key], i)
+        return cb(ref, key, ref[key], i === array.length - 1 && ref.hasOwnProperty(key), i)
     }
 }
 
-function creator (obj, array, index, cb) {
+function strictAccessor (obj, path, cb, index) {
+    return accessor(obj, path, function (base, name, value, exists) {
+        if (exists) {
+            return cb(base, name, value)
+        }
+    }, index)
+}
+
+function creator (obj, array, cb, index) {
     var n = array.length
     var ref = obj
     var i = index
@@ -116,66 +126,76 @@ function creator (obj, array, index, cb) {
         ref = ref[prevKey] = _.isNumber(key) ? [] : {}
     }
 
-    return cb(ref, key, undefined)
+    return cb(ref, key, undefined, false, i - 1)
 }
 
-function mutator (obj, path, index, cb) {
-    return accessor(obj, path, index, function (parent, key, oldValue, stop) {
-        if (stop < path.length - 1) {
-            return creator(obj, path, stop, cb)
+function mutator (obj, path, create, cb, index) {
+    return accessor(obj, path, function (base, name, value, exists, stop) {
+        if (create && !exists) {
+            return creator(base, path, cb, stop)
         } else {
-            return cb(parent, key, oldValue)
+            return cb(base, name, value, exists, stop)
         }
-    })
+    }, index)
+}
+
+function extendOp (obj, path, cb, args, create, filter, index) {
+    return mutator(obj, path, create, function (base, name, value, stop, exists) {
+        if (create && !base.hasOwnProperty(name)) {
+            value = base[name] = create
+        }
+        if ((create || exists) && (!isFunction(filter) || filter(value))) {
+            cb.apply(value, args)
+        }
+    }, index)
 }
 
 function factory (parser, methods) {
     return Object.keys(methods).reduce(function (memo, method) {
-        memo[method] = function (obj, path) {
-            arguments[1] = parser(path)
-            return methods[method].apply(this, [].slice.call(arguments))
+        memo[method] = function () {
+            var args = [].slice.call(arguments)
+            args[1] = parser(args[1])
+            return methods[method].apply(this, [].slice.call(args))
         }
         return memo
     }, {})
 }
 
 function get (obj, path, def) {
-    return accessor(obj, path, 0, function (parent, key, oldValue, stop) {
-        return (stop < path.length - 1 || !parent.hasOwnProperty(key)) ? def : oldValue
+    return accessor(obj, path, function (base, name, value, exists) {
+        return !exists ? def : value
     })
 }
 
 function set (obj, path, value) {
-    return mutator(obj, path, 0, function (parent, key, oldValue) {
-        parent[key] = value
+    return mutator(obj, path, true, function (base, name, oldValue) {
+        base[name] = value
         return oldValue
     })
 }
 
 function empty (obj, path) {
-    return accessor(obj, path, 0, function (parent, key, oldValue) {
-        if (parent.hasOwnProperty(key)) {
-            if (oldValue !== null && oldValue !== undefined && _.isFunction(oldValue.constructor)) {
-                parent[key] = (new oldValue.constructor()).valueOf()
-            }
-            return oldValue
-        }
+    return strictAccessor(obj, path, function (base, name, value) {
+        base[name] = (new value.constructor()).valueOf()
+        return value
     })
 }
 
 function has (obj, path) {
-    return accessor(obj, path, 0, function (parent, key, oldValue, stop) {
-        return stop === path.length - 1 && parent.hasOwnProperty(key)
+    return accessor(obj, path, function (parent, key, oldValue, exists) {
+        return exists
     })
 }
 
 function del (obj, path) {
-    return accessor(obj, path, 0, function (parent, key, oldValue, stop) {
-        if (stop === path.length - 1 && parent.hasOwnProperty(key)) {
-            delete parent[key]
-            return oldValue
-        }
+    return strictAccessor(obj, path, function (base, name, value) {
+        delete base[name]
+        return value
     })
+}
+
+function push (obj, path) {
+    return extendOp(obj, path, [].push, [].slice.call(arguments, 2), [], isArray)
 }
 
 module.exports = factory(pathNormalizer, {
@@ -183,5 +203,6 @@ module.exports = factory(pathNormalizer, {
     set: set,
     has: has,
     empty: empty,
+    push: push,
     del: del
 })

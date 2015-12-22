@@ -1,13 +1,8 @@
 var isArray = require('isarray')
-var op = require('./op')
+var extendOp = require('./src/core/extend-op')
 
 function splice (obj, path) {
-    var args = [].slice.call(arguments, 2)
-    return op(obj, path, {
-        op: [].splice,
-        filter: isArray,
-        create: []
-    }, args)
+    return extendOp(obj, path, [].splice, [].slice.call(arguments, 2), [], isArray)
 }
 
 module.exports = splice
