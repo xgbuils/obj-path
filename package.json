@@ -2,7 +2,7 @@
   "name": "obj-path",
   "version": "0.1.0",
   "description": "parser string to array that is input of object-path",
-  "main": "index.js",
+  "main": "./src/",
   "directories": {
     "test": "test"
   },

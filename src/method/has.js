@@ -1,4 +1,4 @@
-var accessor = require('./src/core/accessor')
+var accessor = require('../core/accessor')
 
 function has (obj, path) {
     return accessor(obj, path, function (parent, key, oldValue, exists) {

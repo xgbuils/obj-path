@@ -1,7 +1,7 @@
 /*eslint no-unused-expressions: 0*/
 
 var expect = require('chai').expect
-var objectPath = require('../index.js')
+var objectPath = require('../src/index.js')
 
 function getTestObj () {
     return {
@@ -100,8 +100,7 @@ describe('get', function () {
         // CHANGED
         //expect(objectPath.get(obj, '', null)).to.be.deep.equal({ '1a': 'foo' });
         expect(objectPath.get(obj, '', null)).to.be.deep.equal(null)
-        // TODO
-        //expect(objectPath.get(obj, [])).to.be.deep.equal({ '1a': 'foo' });
+        expect(objectPath.get(obj, [])).to.be.deep.equal({ '1a': 'foo' })
         expect(objectPath.get({}, ['1'])).to.be.equal(undefined)
     })
 
@@ -186,10 +185,13 @@ describe('set', function () {
     })
     it('should create intermediate arrays', function () {
         var obj = getTestObj()
-        //objectPath.set(obj, 'c.0.1.m', 'l');
-        //expect(obj.c).to.be.an('array');
-        //expect(obj.c[0]).to.be.an('array');
-        //expect(obj).to.have.deep.property('c.0.1.m', 'l');
+        /*
+        // DELETED -> NEW SINTAXIS
+        objectPath.set(obj, 'c.0.1.m', 'l');
+        expect(obj.c).to.be.an('array');
+        expect(obj.c[0]).to.be.an('array');
+        expect(obj).to.have.deep.property('c.0.1.m', 'l');
+        */
         // CHANGED
         objectPath.set(obj, 'c[0][1].m', 'l')
         expect(obj.c).to.be.an('array')
@@ -255,106 +257,116 @@ describe('push', function () {
         expect(obj).to.have.deep.property('b.h.0', 'l')
     })
 
+    // obj.b.e[0] is not array, HAS NO SENSE call push method
     /*it('should push value to existing array using number path', function () {
         var obj = getTestObj()
         objectPath.push(obj.b.e, 0, 'l')
+        console.log(obj.b.e)
         expect(obj).to.have.deep.property('b.e.0.0', 'l')
     })*/
 })
 
-/*describe('ensureExists', function () {
-  it('should create the path if it does not exists', function () {
-    var obj = getTestObj();
-    var oldVal = objectPath.ensureExists(obj, 'b.g.1.l', 'test');
-    expect(oldVal).to.not.exist;
-    expect(obj).to.have.deep.property('b.g.1.l', 'test');
-    oldVal = objectPath.ensureExists(obj, 'b.g.1.l', 'test1');
-    expect(oldVal).to.be.equal('test');
-    expect(obj).to.have.deep.property('b.g.1.l', 'test');
-    oldVal = objectPath.ensureExists(obj, 'b.\u8210', 'ok');
-    expect(oldVal).to.not.exist;
-    expect(obj).to.have.deep.property('b.\u8210', 'ok');
-    oldVal = objectPath.ensureExists(obj, ['b','dot.dot'], 'ok');
-    expect(oldVal).to.not.exist;
-    expect(objectPath.get(obj, ['b','dot.dot'])).to.be.equal('ok');
-  });
+describe('ensureExists', function () {
+    it('should create the path if it does not exists', function () {
+        var obj = getTestObj()
+        var oldVal = objectPath.ensureExists(obj, 'b.g.1.l', 'test')
+        expect(oldVal).to.not.exist
+        expect(obj).to.have.deep.property('b.g.1.l', 'test')
+        oldVal = objectPath.ensureExists(obj, 'b.g.1.l', 'test1')
+        expect(oldVal).to.be.equal('test')
+        expect(obj).to.have.deep.property('b.g.1.l', 'test')
+        oldVal = objectPath.ensureExists(obj, 'b.\u8210', 'ok')
+        expect(oldVal).to.not.exist
+        expect(obj).to.have.deep.property('b.\u8210', 'ok')
+        oldVal = objectPath.ensureExists(obj, ['b', 'dot.dot'], 'ok')
+        expect(oldVal).to.not.exist
+        expect(objectPath.get(obj, ['b', 'dot.dot'])).to.be.equal('ok')
+    })
 
-  it('should return the object if path is empty', function () {
-    var obj = getTestObj();
-    expect(objectPath.ensureExists(obj, [], 'test')).to.have.property('a', 'b');
-  });
+    it('should return the object if path is empty', function () {
+        var obj = getTestObj()
+        expect(objectPath.ensureExists(obj, [], 'test')).to.have.property('a', 'b')
+    })
 
-  it('Issue #26', function () {
-    var any = {};
-    objectPath.ensureExists(any, ['1','1'], {});
-    expect(any).to.be.an('object');
-    expect(any[1]).to.be.an('object');
-    expect(any[1][1]).to.be.an('object');
-  });
-});
+    it('Issue #26', function () {
+        var any = {}
+        objectPath.ensureExists(any, ['1', '1'], {})
+        expect(any).to.be.an('object')
+        expect(any[1]).to.be.an('object')
+        expect(any[1][1]).to.be.an('object')
+    })
+})
 
-describe('coalesce', function (){
-  it('should return the first non-undefined value', function (){
-    var obj = {
-      should: {have: 'prop'}
-    };
+describe('coalesce', function () {
+    it('should return the first non-existent value', function () {
+        var obj = {
+            should: {
+                have: 'prop'
+            }
+        }
 
-    expect(objectPath.coalesce(obj, [
-      'doesnt.exist',
-      ['might','not','exist'],
-      'should.have'
-    ])).to.equal('prop');
-  });
+        expect(objectPath.coalesce(obj, [
+            'doesnt.exist',
+            ['might', 'not', 'exist'],
+            'should.have'
+        ])).to.equal('prop')
+    })
 
-  it('should work with falsy values (null, 0, \'\', false)', function (){
-    var obj = {
-      is: {
-        false: false,
-        null: null,
-        empty: '',
-        zero: 0
-      }
-    };
+    it('should work with falsy values (null, 0, \'\', false)', function () {
+        var obj = {
+            is: {
+                false: false,
+                null: null,
+                undefined: undefined,
+                empty: '',
+                zero: 0
+            }
+        }
 
-    expect(objectPath.coalesce(obj, [
-      'doesnt.exist',
-      'is.zero'
-    ])).to.equal(0);
+        expect(objectPath.coalesce(obj, [
+            'doesnt.exist',
+            'is.zero'
+        ])).to.equal(0)
+        expect(objectPath.coalesce(obj, [
+            'doesnt.exist',
+            'is.false'
+        ])).to.equal(false)
+        expect(objectPath.coalesce(obj, [
+            'doesnt.exist',
+            'is.null'
+        ])).to.equal(null)
+        expect(objectPath.coalesce(obj, [
+            'doesnt.exist',
+            'is.empty'
+        ])).to.equal('')
+        expect(objectPath.coalesce(obj, [
+            'doesnt.exist',
+            'is.undefined'
+        ])).to.equal(undefined)
+    })
 
-    expect(objectPath.coalesce(obj, [
-      'doesnt.exist',
-      'is.false'
-    ])).to.equal(false);
+    it('returns defaultValue if no paths found', function () {
+        var obj = {
+            doesnt: 'matter'
+        }
 
-    expect(objectPath.coalesce(obj, [
-      'doesnt.exist',
-      'is.null'
-    ])).to.equal(null);
+        expect(objectPath.coalesce(obj, [
+            'some.inexistant',
+            'path',
+            ['on', 'object']
+        ], 'false')).to.equal('false')
+    })
 
-    expect(objectPath.coalesce(obj, [
-      'doesnt.exist',
-      'is.empty'
-    ])).to.equal('');
-  });
+    it('works with unicode and dot keys', function () {
+        var obj = {
+            '\u7591': true,
+            'dot.dot': false
+        }
 
-  it('returns defaultValue if no paths found', function (){
-    var obj = {
-      doesnt: 'matter'
-    };
-
-    expect(objectPath.coalesce(obj, ['some.inexistant','path',['on','object']], 'false')).to.equal('false');
-  });
-
-  it('works with unicode and dot keys', function (){
-    var obj = {
-      '\u7591': true,
-      'dot.dot': false
-    };
-
-    expect(objectPath.coalesce(obj, ['1', '\u7591', 'a.b'])).to.equal(true);
-    expect(objectPath.coalesce(obj, ['1', ['dot.dot'], '\u7591'])).to.equal(false);
-  });
-});*/
+        expect(objectPath.coalesce(obj, ['1', '\u7591', 'a.b'])).to.equal(true)
+        expect(objectPath.coalesce(obj, ['1', ['dot.dot'], '\u7591'])).to.equal(false)
+    })
+})
 
 describe('empty', function () {
     /*it('should ignore invalid arguments safely', function () {

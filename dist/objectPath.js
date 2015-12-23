@@ -12,6 +12,10 @@ var isArray = Array.isArray || function (arr) {
     return toString.call(arr) === '[object Array]'
 }
 
+function returnObjIfEmptyPath (obj, path, value) {
+    return path.length > 0 ? value : obj
+}
+
 var isString = _.isString
 var isFunction = _.isFunction
 var bracketRegexp = /\['((?:\\'|[^'])*)'\]|\["((?:\\"|[^"])*)"\]|\[(\d+)\]/g
@@ -150,34 +154,33 @@ function extendOp (obj, path, cb, args, create, filter, index) {
     }, index)
 }
 
-function factory (parser, methods) {
-    return Object.keys(methods).reduce(function (memo, method) {
-        memo[method] = function () {
+function factory (objectPath, parser, methods) {
+    Object.keys(methods).forEach(function (method) {
+        objectPath[method] = function () {
             var args = [].slice.call(arguments)
             args[1] = parser(args[1])
             return methods[method].apply(this, [].slice.call(args))
         }
-        return memo
-    }, {})
+    })
 }
 
 function get (obj, path, def) {
     return accessor(obj, path, function (base, name, value, exists) {
-        return !exists ? def : value
+        return returnObjIfEmptyPath(obj, path, !exists ? def : value)
     })
 }
 
 function set (obj, path, value) {
     return mutator(obj, path, true, function (base, name, oldValue) {
         base[name] = value
-        return oldValue
+        return returnObjIfEmptyPath(obj, path, oldValue)
     })
 }
 
 function empty (obj, path) {
     return strictAccessor(obj, path, function (base, name, value) {
         base[name] = (new value.constructor()).valueOf()
-        return value
+        return returnObjIfEmptyPath(obj, path, value)
     })
 }
 
@@ -190,7 +193,7 @@ function has (obj, path) {
 function del (obj, path) {
     return strictAccessor(obj, path, function (base, name, value) {
         delete base[name]
-        return value
+        return returnObjIfEmptyPath(obj, path, value)
     })
 }
 
@@ -198,11 +201,45 @@ function push (obj, path) {
     return extendOp(obj, path, [].push, [].slice.call(arguments, 2), [], isArray)
 }
 
-module.exports = factory(pathNormalizer, {
+function splice (obj, path) {
+    return extendOp(obj, path, [].splice, [].slice.call(arguments, 2), [], isArray)
+}
+
+function ensureExists (obj, path, value) {
+    return mutator(obj, path, true, function (base, name, oldValue, exists) {
+        if (!exists) {
+            base[name] = value
+        }
+        return returnObjIfEmptyPath(obj, path, oldValue)
+    })
+}
+
+function coalesce (obj, paths, def) {
+    var exists
+    var value
+    for (var i = 0; i < paths.length && !exists; ++i) {
+        /*eslint no-loop-func: 0*/
+        exists = accessor(obj, paths[i], function (base, name, val, exists) {
+            value = val
+            return exists
+        })
+    }
+    return exists ? value : def
+}
+
+factory(module.exports, pathNormalizer, {
     get: get,
     set: set,
     has: has,
-    empty: empty,
+    del: del,
     push: push,
-    del: del
+    ensureExists: ensureExists,
+    splice: splice,
+    empty: empty
+})
+
+factory(module.exports, function (paths) {
+    return paths.map(pathNormalizer)
+}, {
+    coalesce: coalesce
 })
