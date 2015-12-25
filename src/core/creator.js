@@ -3,18 +3,18 @@ var _ = require('../helpers/type')
 /*
  * precondition obj !== undefined && obj !== null
  */
-function creator (obj, array, cb, index) {
+function creator (obj, array, newValue, options, modifier, index) {
     var n = array.length
-    var ref = obj
+    var base = obj
     var i = index
     var key = array[i]
     for (++i; i < n; ++i) {
         var prevKey = key
         key = array[i]
-        ref = ref[prevKey] = _.isNumber(key) ? [] : {}
+        base = base[prevKey] = _.isNumber(key) ? [] : {}
     }
 
-    return cb(ref, key, undefined, false, i - 1)
+    return modifier(base, key, newValue, base[key], false, options)
 }
 
 module.exports = creator

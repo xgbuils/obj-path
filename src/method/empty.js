@@ -1,11 +1,10 @@
-var strictAccessor = require('../core/strict-accessor')
-var returnObjIfEmptyPath = require('../helpers/return-obj-if-empty-path')
+var isFunction = require('../helpers/type').isFunction
 
-function empty (obj, path) {
-    return strictAccessor(obj, path, function (base, name, value) {
+function empty (base, name) {
+    var value = base[name]
+    if (value !== undefined && value !== null && isFunction(value.constructor)) {
         base[name] = (new value.constructor()).valueOf()
-        return returnObjIfEmptyPath(obj, path, value)
-    })
+    }
 }
 
 module.exports = empty

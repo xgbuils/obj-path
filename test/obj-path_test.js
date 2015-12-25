@@ -257,13 +257,11 @@ describe('push', function () {
         expect(obj).to.have.deep.property('b.h.0', 'l')
     })
 
-    // obj.b.e[0] is not array, HAS NO SENSE call push method
-    /*it('should push value to existing array using number path', function () {
+    it('should push value to existing array using number path', function () {
         var obj = getTestObj()
         objectPath.push(obj.b.e, 0, 'l')
-        console.log(obj.b.e)
         expect(obj).to.have.deep.property('b.e.0.0', 'l')
-    })*/
+    })
 })
 
 describe('ensureExists', function () {
@@ -403,6 +401,7 @@ describe('empty', function () {
             },
             instance: new Instance()
         }
+        obj.instance.notOwn = false
 
         //istanbul ignore next: not part of code
         obj['function'] = function () {}
@@ -431,7 +430,8 @@ describe('empty', function () {
         expect(obj.boolean).to.equal(false)
         expect(obj.object).to.deep.equal({})
         // objectPath.empty(obj, 'instance') transform value
-        // to get de default value of this constructor when is called without parameters
+        // to get default value of this constructor when is called without parameters
+        expect(obj.instance.notOwn).to.be.equal(true)
         //expect(obj.instance.notOwn).to.be.an('undefined')
         expect(obj.instance.arr).to.be.an('array')
         //expect(obj['function']).to.equal(null)

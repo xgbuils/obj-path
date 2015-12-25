@@ -1,7 +1,7 @@
 var accessor = require('../core/accessor')
 
 function has (obj, path) {
-    return accessor(obj, path, function (parent, key, oldValue, exists) {
+    return accessor(obj, path, function (base, name, value, exists) {
         return exists
     })
 }

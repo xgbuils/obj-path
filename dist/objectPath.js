@@ -111,76 +111,99 @@ function accessor (obj, array, cb, index) {
     }
 }
 
-function strictAccessor (obj, path, cb, index) {
-    return accessor(obj, path, function (base, name, value, exists) {
-        if (exists) {
-            return cb(base, name, value)
-        }
-    }, index)
-}
-
-function creator (obj, array, cb, index) {
+function creator (obj, array, newValue, options, modifier, index) {
     var n = array.length
-    var ref = obj
+    var base = obj
     var i = index
     var key = array[i]
     for (++i; i < n; ++i) {
         var prevKey = key
         key = array[i]
-        ref = ref[prevKey] = _.isNumber(key) ? [] : {}
+        base = base[prevKey] = _.isNumber(key) ? [] : {}
     }
 
-    return cb(ref, key, undefined, false, i - 1)
+    return modifier(base, key, newValue, base[key], false, options)
 }
 
-function mutator (obj, path, create, cb, index) {
-    return accessor(obj, path, function (base, name, value, exists, stop) {
-        if (create && !exists) {
-            return creator(base, path, cb, stop)
+function modifier (base, name, newValue, oldValue, exists, options) {
+    var filter = options.filter
+    if (!filter || filter(oldValue, exists, base, name)) {
+        options.cb(base, name, newValue, oldValue)
+    }
+    return options.old ? oldValue : base[name]
+}
+
+function mutator (obj, path, options, newValue, index) {
+    if (path.length === 0) {
+        return obj
+    }
+    return accessor(obj, path, function (base, name, oldValue, exists, stop) {
+        if (options.create && !exists) {
+            return creator(base, path, newValue, options, modifier, stop)
         } else {
-            return cb(base, name, value, exists, stop)
+            return modifier(base, name, newValue, oldValue, exists, options)
         }
     }, index)
 }
 
-function extendOp (obj, path, cb, args, create, filter, index) {
-    return mutator(obj, path, create, function (base, name, value, stop, exists) {
-        if (create && !base.hasOwnProperty(name)) {
-            value = base[name] = create
-        }
-        if ((create || exists) && (!isFunction(filter) || filter(value))) {
-            cb.apply(value, args)
-        }
-    }, index)
+var filters = {
+    'exists': function (value, exists) {
+        return exists
+    },
+    'does not exist': function (value, exists) {
+        return !exists
+    }
+}
+
+var returns = {
+    old: true
 }
 
 function factory (objectPath, parser, methods) {
     Object.keys(methods).forEach(function (method) {
-        objectPath[method] = function () {
-            var args = [].slice.call(arguments)
-            args[1] = parser(args[1])
-            return methods[method].apply(this, [].slice.call(args))
+        objectPath[method] = function (obj, path, value) {
+            path = parser(path)
+            return methods[method](obj, path, value)
         }
     })
+}
+
+function mutatorFactory (objectPath, parser, config) {
+    Object.keys(config).forEach(function (methodName) {
+        objectPath[methodName] = function (obj, path, value, options) {
+            path = parser(path)
+            options = optionsAdapter(options, config[methodName])
+            return mutator(obj, path, options, value)
+        }
+    })
+}
+
+function optionsAdapter () {
+    var opt = {}
+    var optionsList = [].slice.call(arguments)
+    var value
+    optionsList.forEach(function (options) {
+        for (var key in options) {
+            if (key === 'ifValue') {
+                value = filters[options.ifValue]
+                key = 'filter'
+            } else if (key === 'returns') {
+                value = returns[options.returns]
+                key = 'old'
+            } else {
+                value = options[key]
+            }
+            if (!opt.hasOwnProperty(key) && value !== undefined) {
+                opt[key] = value
+            }
+        }
+    })
+    return opt
 }
 
 function get (obj, path, def) {
     return accessor(obj, path, function (base, name, value, exists) {
         return returnObjIfEmptyPath(obj, path, !exists ? def : value)
-    })
-}
-
-function set (obj, path, value) {
-    return mutator(obj, path, true, function (base, name, oldValue) {
-        base[name] = value
-        return returnObjIfEmptyPath(obj, path, oldValue)
-    })
-}
-
-function empty (obj, path) {
-    return strictAccessor(obj, path, function (base, name, value) {
-        base[name] = (new value.constructor()).valueOf()
-        return returnObjIfEmptyPath(obj, path, value)
     })
 }
 
@@ -190,28 +213,19 @@ function has (obj, path) {
     })
 }
 
-function del (obj, path) {
-    return strictAccessor(obj, path, function (base, name, value) {
-        delete base[name]
-        return returnObjIfEmptyPath(obj, path, value)
-    })
+function set (base, name, value) {
+    base[name] = value
 }
 
-function push (obj, path) {
-    return extendOp(obj, path, [].push, [].slice.call(arguments, 2), [], isArray)
+function empty (base, name) {
+    var value = base[name]
+    if (value !== undefined && value !== null && isFunction(value.constructor)) {
+        base[name] = (new value.constructor()).valueOf()
+    }
 }
 
-function splice (obj, path) {
-    return extendOp(obj, path, [].splice, [].slice.call(arguments, 2), [], isArray)
-}
-
-function ensureExists (obj, path, value) {
-    return mutator(obj, path, true, function (base, name, oldValue, exists) {
-        if (!exists) {
-            base[name] = value
-        }
-        return returnObjIfEmptyPath(obj, path, oldValue)
-    })
+function del (base, name) {
+    delete base[name]
 }
 
 function coalesce (obj, paths, def) {
@@ -227,19 +241,53 @@ function coalesce (obj, paths, def) {
     return exists ? value : def
 }
 
-factory(module.exports, pathNormalizer, {
+var objectPath = {}
+
+factory(objectPath, pathNormalizer, {
     get: get,
-    set: set,
-    has: has,
-    del: del,
-    push: push,
-    ensureExists: ensureExists,
-    splice: splice,
-    empty: empty
+    has: has
 })
 
-factory(module.exports, function (paths) {
+factory(objectPath, function (paths) {
     return paths.map(pathNormalizer)
 }, {
     coalesce: coalesce
 })
+
+mutatorFactory(objectPath, pathNormalizer, {
+    set: {
+        cb: set,
+        create: true,
+        returns: 'old'
+    },
+    del: {
+        cb: del,
+        ifValue: 'exists',
+        returns: 'old'
+    },
+    empty: {
+        cb: empty,
+        ifValue: 'exists',
+        returns: 'old'
+    },
+    ensureExists: {
+        cb: set,
+        create: true,
+        ifValue: 'does not exist',
+        returns: 'old'
+    }
+})
+
+objectPath.push = function (obj, path) {
+    var args = [].slice.call(arguments, 2)
+    var value = objectPath.set(obj, path, [], {
+        create: true,
+        filter: function (value) {
+            return !isArray(value)
+        },
+        old: false
+    })
+    return value.push.apply(value, args)
+}
+
+module.exports = objectPath
