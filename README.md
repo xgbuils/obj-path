@@ -6,26 +6,26 @@ Reading code of [https://github.com/mariocasciaro/object-path/](mariocasciaro/ob
 
 In object-path, `push` and `insert` are implemented accessing in element indicated by path and then modifying value accessed. It might not necessary if `set`, `get` or `ensureExists` had returned the current value (and hadn't returned the old value). For example:
 
-```
+``` javascript
 var obj = { array: [2] }
 objectPath.get(obj, ['array']).push(3) // now: obj === { array: [2, 3]}
 ```
 Or if you would create array when it doesn't exist:
-```
+``` javascript
 var obj = { array: [2] }
 objectPath.ensureExist(obj, ['foo', 'bar']).push(5, 4) // now: obj === { array: [2], foo: [5, 4]}
 ```
 
-In other hand, some times, it's useful to get old value when another is modified. So, it's interesting to allow configuring methods `set`, `empty` or `del` with a extra parameter `options` with property `returns = 'new' | 'old'`. For example:
+On other hand, some times, it's useful to get old value when another is modified. So, it's interesting to allow configuring methods `set`, `empty` or `del` with a extra parameter `options` with property `returns = 'new' | 'old'`. For example:
 
-```
+``` javascript
 var obj = { foo: 3 }
 objectPath.set(obj, ['foo'], 5, {
     returns: 'old'
 }) // returns old value: 3
 ```
 Or:
-```
+``` javascript
 var obj = { foo: 3 }
 objectPath.del(obj, ['foo'], {
     returns: 'old'
@@ -36,7 +36,7 @@ objectPath.del(obj, ['foo'], {
 
 I think that it is not necessary to implement `ensureExists` method. It might be used a `set` method that had been configured with property `ifValue = 'does not exist' | 'exists'`. For example:
 
-```
+``` javascript
 // it behaves like ensureExists
 var obj = { foo: 3}
 objectPath.set(obj, ['foo'], 5, {
@@ -48,9 +48,8 @@ objectPath.set(obj, ['bar'], 5, {
 }) // obj is modified. now: { foo: 3, bar: 5 }
 ```
 And additional behaviour when `ifValue === 'exists'`:
-```
-// it behaves like ensureExists
-var obj = { foo: 3}
+``` javascript
+var obj = { foo: 3 }
 objectPath.set(obj, ['foo'], 5, {
     ifValue: 'exists'
 }) // obj is modified. now: { foo: 5 }
@@ -64,7 +63,7 @@ objectPath.set(obj, ['bar'], 5, {
 
 As opposed to `del` and `empty` methods, `set` method create intermediate object if it does not exist. This behaviour might be changed by configuration. For example: 
 
-```
+``` javascript
 // it behaves like ensureExists
 var obj = { foo: 3}
 objectPath.set(obj, ['fizz', 'buzz'], 5, {
@@ -76,7 +75,7 @@ objectPath.set(obj, ['fizz', 'buzz'], 5, {
 
 Maybe you need set value depending on value to modify. For example: set only if value is not an array. It might be interesting to use property `filter` with callback function:
 
-```
+``` javascript
 // it behaves like push implemented in objectPath
 var obj = { foo: 3}
 // set empty array if value is not an array.
